@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useWasteManagement } from '@/hooks/useWasteManagement';
 import { useWaste } from '@/context/WasteContext';
 import { Input } from '@/components/ui/input';
-import { Loader2, Upload, Search, Camera } from 'lucide-react';
+import { Loader2, Upload, Search, Camera, RotateCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const WasteIdentifier: React.FC = () => {
@@ -13,7 +13,10 @@ const WasteIdentifier: React.FC = () => {
   const { setIdentifiedWaste } = useWaste();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,7 +58,7 @@ const WasteIdentifier: React.FC = () => {
     if (!selectedFile) {
       toast({
         title: 'No image selected',
-        description: 'Please upload an image to identify',
+        description: 'Please upload an image or capture one with your camera to identify',
         variant: 'destructive',
       });
       return;
@@ -70,6 +73,82 @@ const WasteIdentifier: React.FC = () => {
     }
   };
 
+  const startCamera = async () => {
+    try {
+      setIsCapturing(true);
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+
+      toast({
+        title: 'Camera active',
+        description: 'Position the waste item in frame and tap "Capture"',
+      });
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      toast({
+        title: 'Camera access denied',
+        description: 'Please allow camera access or upload an image instead',
+        variant: 'destructive',
+      });
+      setIsCapturing(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      const tracks = stream.getTracks();
+      
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    
+    setIsCapturing(false);
+  };
+
+  const captureImage = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      
+      // Set canvas dimensions to match video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      
+      // Draw the current video frame to the canvas
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            // Create a File object from the blob
+            const file = new File([blob], "camera-capture.jpg", { type: "image/jpeg" });
+            setSelectedFile(file);
+            
+            // Generate preview URL
+            const imageUrl = URL.createObjectURL(blob);
+            setPreviewUrl(imageUrl);
+            
+            // Stop the camera
+            stopCamera();
+            
+            toast({
+              title: 'Image captured',
+              description: 'Click "Identify Waste" to analyze the image',
+            });
+          }
+        }, 'image/jpeg', 0.95);
+      }
+    }
+  };
+
   return (
     <div className="space-y-6 animate-slide-up">
       <div className="grid md:grid-cols-2 gap-6">
@@ -79,11 +158,18 @@ const WasteIdentifier: React.FC = () => {
               <div 
                 className={cn(
                   "w-full aspect-video rounded-md border-2 border-dashed flex flex-col items-center justify-center cursor-pointer overflow-hidden relative",
-                  previewUrl ? "border-primary" : "border-muted-foreground/25 hover:border-muted-foreground/50"
+                  previewUrl || isCapturing ? "border-primary" : "border-muted-foreground/25 hover:border-muted-foreground/50"
                 )}
-                onClick={triggerFileInput}
+                onClick={isCapturing ? undefined : triggerFileInput}
               >
-                {previewUrl ? (
+                {isCapturing ? (
+                  <video 
+                    ref={videoRef} 
+                    autoPlay 
+                    playsInline 
+                    className="w-full h-full object-cover"
+                  />
+                ) : previewUrl ? (
                   <img 
                     src={previewUrl} 
                     alt="Preview" 
@@ -98,6 +184,7 @@ const WasteIdentifier: React.FC = () => {
                 )}
               </div>
               
+              {/* Hidden elements */}
               <input
                 type="file"
                 ref={fileInputRef}
@@ -105,33 +192,74 @@ const WasteIdentifier: React.FC = () => {
                 accept="image/*"
                 className="hidden"
               />
+              <canvas ref={canvasRef} className="hidden" />
               
               <div className="flex gap-3 mt-4 w-full">
-                <Button
-                  variant="outline"
-                  onClick={triggerFileInput}
-                  className="flex-1"
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  Select Image
-                </Button>
-                <Button 
-                  className="flex-1"
-                  disabled={!selectedFile || isIdentifying}
-                  onClick={handleIdentifyClick}
-                >
-                  {isIdentifying ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Analyzing...
-                    </>
-                  ) : (
-                    <>
+                {isCapturing ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={stopCamera}
+                      className="flex-1"
+                    >
+                      <RotateCcw className="mr-2 h-4 w-4" />
+                      Cancel
+                    </Button>
+                    <Button 
+                      className="flex-1"
+                      onClick={captureImage}
+                    >
                       <Camera className="mr-2 h-4 w-4" />
-                      Identify Waste
-                    </>
-                  )}
-                </Button>
+                      Capture
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={previewUrl ? () => {
+                        setPreviewUrl(null);
+                        setSelectedFile(null);
+                      } : triggerFileInput}
+                      className="flex-1"
+                    >
+                      {previewUrl ? (
+                        <>
+                          <RotateCcw className="mr-2 h-4 w-4" />
+                          Clear
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload
+                        </>
+                      )}
+                    </Button>
+                    <Button 
+                      variant={previewUrl ? "default" : "outline"}
+                      className="flex-1"
+                      onClick={previewUrl ? handleIdentifyClick : startCamera}
+                      disabled={isIdentifying}
+                    >
+                      {isIdentifying ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Analyzing...
+                        </>
+                      ) : previewUrl ? (
+                        <>
+                          <Search className="mr-2 h-4 w-4" />
+                          Identify Waste
+                        </>
+                      ) : (
+                        <>
+                          <Camera className="mr-2 h-4 w-4" />
+                          Use Camera
+                        </>
+                      )}
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </CardContent>
