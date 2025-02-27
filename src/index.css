@@ -93,6 +93,17 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: 
+      radial-gradient(at 30% 20%, hsla(142, 33%, 92%, 0.25) 0px, transparent 50%), 
+      radial-gradient(at 80% 80%, hsla(30, 40%, 90%, 0.25) 0px, transparent 50%);
+    background-attachment: fixed;
+    background-size: cover;
+  }
+  
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 }
 
@@ -119,5 +130,34 @@
   
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Enhanced card styling */
+  .eco-card {
+    @apply bg-white/90 dark:bg-black/40 backdrop-blur-md border border-nature-200/50 dark:border-nature-800/30 rounded-xl shadow-sm transition-all hover:shadow-md dark:shadow-nature-950/10;
+  }
+  
+  /* Interactive elements */
+  .interactive-item {
+    @apply transition-all duration-300 hover:translate-y-[-2px] hover:shadow-md active:translate-y-[0] active:shadow-sm;
+  }
+  
+  /* Fancy list items */
+  .eco-list-item {
+    @apply relative pl-6 before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-3 before:h-3 before:bg-nature-300 dark:before:bg-nature-700 before:rounded-full;
+  }
+
+  /* Button hover effects */
+  .btn-hover-slide {
+    @apply relative overflow-hidden before:absolute before:inset-0 before:bg-white/20 dark:before:bg-black/20 before:translate-x-[-100%] hover:before:translate-x-0 before:transition-transform before:duration-300;
+  }
+  
+  /* Image containers */
+  .img-hover-zoom {
+    @apply overflow-hidden rounded-lg;
+  }
+  
+  .img-hover-zoom img {
+    @apply transition-transform duration-500 hover:scale-110;
   }
 }
