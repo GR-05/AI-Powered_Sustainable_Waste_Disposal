@@ -3,12 +3,14 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useWasteManagement } from '@/hooks/useWasteManagement';
+import { useWaste } from '@/context/WasteContext';
 import { Input } from '@/components/ui/input';
 import { Loader2, Upload, Search, Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const WasteIdentifier: React.FC = () => {
   const { identifyWaste, isIdentifying, searchWasteItems, searchResults, searchQuery } = useWasteManagement();
+  const { setIdentifiedWaste } = useWaste();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -161,7 +163,7 @@ const WasteIdentifier: React.FC = () => {
                     className="p-3 border rounded-md hover:bg-accent transition-colors cursor-pointer flex items-center gap-3"
                     onClick={() => {
                       // Set identified waste directly from search
-                      useWasteManagement().setIdentifiedWaste(waste);
+                      setIdentifiedWaste(waste);
                     }}
                   >
                     {waste.imageUrl && (

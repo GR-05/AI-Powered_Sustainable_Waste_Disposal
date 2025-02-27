@@ -109,11 +109,13 @@ export const useWasteManagement = () => {
     identifyWaste,
     isIdentifying,
     identifiedWaste,
+    setIdentifiedWaste,
     searchWasteItems,
     searchResults,
     searchQuery,
     recordWasteDisposal,
     getCategoryStats,
-    updateDisposalLimit
+    updateDisposalLimit,
+    isOverLimit
   };
 };
