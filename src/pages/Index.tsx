@@ -69,7 +69,7 @@ const Index = () => {
               {/* Empty TabsContent elements to register tabs */}
               {tabs.map((tab) => (
                 <TabPanel key={tab.id} value={tab.id} className="hidden">
-                  {/* This empty child element fixes the type error */}
+                  <div></div>
                 </TabPanel>
               ))}
             </TabNavigation>
