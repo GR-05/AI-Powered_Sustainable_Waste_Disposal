@@ -43,6 +43,9 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Custom cursor colors */
+    --cursor-hover-color: 0 0% 90%; /* Light grey for cursor hover */
   }
 
   .dark {
@@ -82,6 +85,9 @@
     --sidebar-accent-foreground: 142 10% 90%;
     --sidebar-border: 142 15% 20%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Custom cursor colors for dark mode */
+    --cursor-hover-color: 0 0% 30%; /* Slightly darker grey for dark mode */
   }
 }
 
@@ -104,6 +110,22 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+  }
+  
+  /* Cursor styles */
+  button:hover, a:hover, [role="button"]:hover, 
+  .cursor-pointer:hover, input[type="checkbox"]:hover,
+  input[type="radio"]:hover, select:hover {
+    cursor: pointer;
+  }
+  
+  /* Custom cursor color on hover for interactive elements */
+  button:hover, a:hover, [role="button"]:hover, 
+  .cursor-pointer:hover, input[type="checkbox"]:hover,
+  input[type="radio"]:hover, select:hover,
+  .interactive-hover:hover {
+    outline-color: hsl(var(--cursor-hover-color));
+    box-shadow: 0 0 0 1px hsl(var(--cursor-hover-color) / 0.3);
   }
 }
 
@@ -159,5 +181,14 @@
   
   .img-hover-zoom img {
     @apply transition-transform duration-500 hover:scale-110;
+  }
+  
+  /* Cursor hover effect */
+  .hover-highlight {
+    @apply transition-all duration-200;
+  }
+  
+  .hover-highlight:hover {
+    @apply bg-[#f3f3f3] dark:bg-[#333333];
   }
 }
