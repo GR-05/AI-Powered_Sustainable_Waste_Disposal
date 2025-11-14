@@ -14,7 +14,7 @@ Follow these steps:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
-git clone <>
+git clone <https://github.com/GR-05/AI-Powered_Sustainable_Waste_Disposal/tree/main>
 
 # Step 2: Navigate to the project directory.
 cd <AI-Powered_Sustainable_Waste_Disposal>
