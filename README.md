@@ -14,13 +14,13 @@ Follow these steps:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
-git clone <GIT_URL>
+git clone <>
 
 # Step 2: Navigate to the project directory.
-cd <PROJECT_NAME>
+cd <AI-Powered_Sustainable_Waste_Disposal>
 
 # Step 3: Install the necessary dependencies.
-npm i
+npm install
 
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
