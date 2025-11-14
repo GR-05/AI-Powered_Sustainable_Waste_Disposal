@@ -1,6 +1,7 @@
 # Welcome to "AI-Powered Sustainable Waste Disposal" project
 
-## Project info: This project uses AI and Machine Learning to optimize waste disposal by identifying waste types, predicting decomposition time, suggesting sustainable recycling methods, and connecting users with vendors. It promotes eco-friendly waste management and reduces environmental impact.
+## project information
+This project uses AI and Machine Learning to optimize waste disposal by identifying waste types, predicting decomposition time, suggesting sustainable recycling methods, and connecting users with vendors. It promotes eco-friendly waste management and reduces environmental impact.
 
 **URL**:
 **Use your preferred IDE**
@@ -13,10 +14,10 @@ Follow these steps:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone <GIT_URL>
 
 # Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+cd <PROJECT_NAME>
 
 # Step 3: Install the necessary dependencies.
 npm i
